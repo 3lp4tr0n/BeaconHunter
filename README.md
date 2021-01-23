@@ -18,7 +18,7 @@ Leverage ETW tracing to specifically monitor suspicious threads:
 
 Score suspicious behavior.
 
-Log, display, and take action against.
+Log, display, and take action against them.
   
   
         

@@ -22,11 +22,17 @@ Log, display, and take action against them.
   
 ### Building / Installation
 
-Pre-compiled: `git clone` and go to `Release` folder.
+#### Pre-compiled 
 
-.NET Framework version: `4.5`
+`git clone` and go to `Release` folder.
 
-Nuggets:
+#### .NET Framework version 
+
+`4.5`
+
+#### Nuggets:
+
+Tools -> NuGet Package Manager -> Package Manager Console
 
 * `Install-Package ConsoleTables -Version 2.4.2`
 * `Install-Package Microsoft.Diagnostics.Tracing.TraceEvent -Version 2.0.64`

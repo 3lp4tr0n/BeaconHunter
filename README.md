@@ -28,7 +28,7 @@ Pre-compiled: `git clone` and go to `Release` folder.
 
 Nuggets:
 
-`Install-Package ConsoleTables -Version 2.4.2`
-`Install-Package Microsoft.Diagnostics.Tracing.TraceEvent -Version 2.0.64`
-`Install-Package System.Runtime.InteropServices.RuntimeInformation -Version 4.3.0`
+* `Install-Package ConsoleTables -Version 2.4.2`
+* `Install-Package Microsoft.Diagnostics.Tracing.TraceEvent -Version 2.0.64`
+* `Install-Package System.Runtime.InteropServices.RuntimeInformation -Version 4.3.0`
 

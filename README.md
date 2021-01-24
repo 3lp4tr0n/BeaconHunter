@@ -20,5 +20,15 @@ Score suspicious behavior.
 
 Log, display, and take action against them.
   
-  
-        
+### Building / Installation
+
+Pre-compiled: `git clone` and go to `Release` folder.
+
+.NET Framework version: `4.5`
+
+Nuggets:
+
+`Install-Package ConsoleTables -Version 2.4.2`
+`Install-Package Microsoft.Diagnostics.Tracing.TraceEvent -Version 2.0.64`
+`Install-Package System.Runtime.InteropServices.RuntimeInformation -Version 4.3.0`
+

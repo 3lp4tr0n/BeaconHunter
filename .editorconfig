@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS0642: Possible mistaken empty statement
+dotnet_diagnostic.CS0642.severity = none

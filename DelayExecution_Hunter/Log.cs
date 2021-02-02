@@ -10,7 +10,6 @@ namespace DelayExecution_Hunter
         
         public static void LogWriteProcess(string ProcessName, int ProcessID, object ChildProcess, int SpoofPPID, int ThreadID, string message, bool isSpoof)
         {
-          //  m_exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             try
             {
                 using (StreamWriter w = File.AppendText(m_exePath + "\\" + "Process_Log.txt"))
@@ -34,7 +33,6 @@ namespace DelayExecution_Hunter
         }
         public static void LogWriteNetwork(string ProcessName, object ProcessID, object ThreadID, object ip, object port, int count)
         {
-          //  m_exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             try
             {
                 using (StreamWriter w = File.AppendText(m_exePath + "\\" + "Network_Log.txt"))
@@ -55,7 +53,6 @@ namespace DelayExecution_Hunter
         }
         public static void LogWriteTermination(string ProcessName, object ProcessID, object ThreadID, object VictimID)
         {
-           // m_exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             try
             {
                 using (StreamWriter w = File.AppendText(m_exePath + "\\" + "Terminate_Log.txt"))
@@ -72,8 +69,7 @@ namespace DelayExecution_Hunter
             }
         }
         public static void LogWriteFile(string ProcessName, object ProcessID, object ThreadID, string Action, string filename = "*")
-        {
-            
+        { 
             try
             {
                 using (StreamWriter w = File.AppendText(m_exePath + "\\" + "File_Log.txt"))
@@ -93,7 +89,6 @@ namespace DelayExecution_Hunter
         }
         public static void LogWritePID_TID(string ProcessName, int ProcessID, int ThreadID)
         {
-          //  m_exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             try
             {
                 using (StreamWriter w = File.AppendText(m_exePath + "\\" + "Suspicious_PID_TID_Log.txt"))

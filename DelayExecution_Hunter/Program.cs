@@ -7,6 +7,7 @@ using System.Threading;
 using ConsoleTables;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 
 namespace DelayExecution_Hunter
@@ -25,6 +26,7 @@ namespace DelayExecution_Hunter
 
         // Monitor bools
         private static bool verbose = true;
+        private static bool network_verbose = false;
         private static bool beacon_score = false;
         private static bool pid_tid_history = false;
         private static bool command_history = false;
@@ -60,7 +62,9 @@ namespace DelayExecution_Hunter
                     Console.WriteLine("\nBeaconHunter - @AndrewOliveau");
                     Console.WriteLine("\n\n[1] Monitor");
                     Console.WriteLine("[2] Action");
-                    Console.WriteLine("[3] Verbose (Default ON)\n");
+                    Console.WriteLine("[3] Verbose (Default ON)");
+                    Console.WriteLine("[4] Network count verbose (Default OFF)\n");
+                    Console.Write("> ");
                     input = Console.ReadLine();
 
                     if (input == "1")
@@ -84,6 +88,19 @@ namespace DelayExecution_Hunter
                             verbose = false;
                         }
                     }
+                    else if (input == "4")
+                    {
+                        if (!network_verbose)
+                        {
+                            Console.WriteLine("\n[*] Network Verbose turned ON");
+                            network_verbose = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine("\n[*] Network Verbose turned OFF");
+                            network_verbose = false;
+                        }
+                    }
 
                     else
                     {
@@ -102,6 +119,7 @@ namespace DelayExecution_Hunter
                     Console.WriteLine("   [5] File history");
                     Console.WriteLine("   [6] IP Stats");
                     Console.WriteLine("   [7] Main menu\n");
+                    Console.Write("> ");
                     var user_input = Console.ReadLine();
 
                     if (user_input == "1")
@@ -120,7 +138,7 @@ namespace DelayExecution_Hunter
                             }
                             else
                             {
-                                Console.WriteLine("\nPress 'q' to go back\n");
+                                Console.WriteLine("\nEnter 'q' to go back > \n");
                             }
                         }
                     }
@@ -143,7 +161,7 @@ namespace DelayExecution_Hunter
                             }
                             else
                             {
-                                Console.WriteLine("\nPress 'q' to go back\n");
+                                Console.WriteLine("\nEnter 'q' to go back\n");
                             }
                         }
                     }
@@ -164,7 +182,7 @@ namespace DelayExecution_Hunter
                             }
                             else
                             {
-                                Console.WriteLine("\nPress 'q' to go back\n");
+                                Console.WriteLine("\nEnter 'q' to go back\n");
                             }
                         }
                     }
@@ -185,7 +203,7 @@ namespace DelayExecution_Hunter
                             }
                             else
                             {
-                                Console.WriteLine("\nPress 'q' to go back\n");
+                                Console.WriteLine("\nEnter 'q' to go back\n");
                             }
                         }
                     }
@@ -197,6 +215,7 @@ namespace DelayExecution_Hunter
                         Console.WriteLine("\n------------------------------");
                         PrintLogs("File_Log.txt");
                         file_history = true;
+
                         while (true)
                         {
                             var input3 = Console.ReadLine();
@@ -207,7 +226,7 @@ namespace DelayExecution_Hunter
                             }
                             else
                             {
-                                Console.WriteLine("\nPress 'q' to go back\n");
+                                Console.WriteLine("\nEnter 'q' to go back\n");
                             }
                         }
                     }
@@ -220,16 +239,40 @@ namespace DelayExecution_Hunter
                 {
                     Console.WriteLine("\n------------------------------");
                     Console.WriteLine("\nACTION\n");
-                    Console.WriteLine("   [1] Action Option 1");
+                    Console.WriteLine("   [1] Suspend TID");
                     Console.WriteLine("   [2] Action Option 2");
                     Console.WriteLine("   [3] Action Option 3");
                     Console.WriteLine("   [4] Action Option 4");
                     Console.WriteLine("   [5] Main menu\n");
+                    Console.Write("> ");
                     var input2 = Console.ReadLine();
 
                     if (input2 == "1")
                     {
-                        Console.WriteLine("Action Option 1 was selected!\n");
+                        Console.WriteLine("\n------------------------------");
+                        Console.WriteLine("\nTERMINATE TID\n");
+
+                        Console.Write("[*] Enter TID to terminate ('q' to quit) > ");
+
+                        var tid = Console.ReadLine();
+                        
+                        try
+                        {
+                            if (tid == "q")
+                            {
+                                Console.WriteLine("\n[*] Quit");
+                            }
+                            else
+                            {
+                                TerminateTID(int.Parse(tid));
+                            }
+                        }
+                        catch (System.FormatException)
+                        {
+                            Console.WriteLine("\n[!] Incorrect TID");
+                        }
+
+                        
                     }
                     else if (input2 == "5")
                     {
@@ -331,6 +374,7 @@ namespace DelayExecution_Hunter
                         }
                         catch { continue; }
                     }
+
                     else
                     {
                         ProcessThreadCollection myThreads = proc.Threads;
@@ -354,10 +398,12 @@ namespace DelayExecution_Hunter
                                         score2[proc.Id][pt.Id].Add(0); //derivative
                                         score2[proc.Id][pt.Id].Add(0); //Count
                                         score2[proc.Id][pt.Id].Add(1); //Score
-                                        foreach (int x in threadIDs2[proc.Id])
+
+                                        if (verbose || pid_tid_history)
                                         {
-                                            Console.WriteLine(string.Format("[!!!] New DelayExecution TID {0} in PID {1}", x, proc.Id));
+                                            Console.WriteLine("\n{0} => New Process with suspicious Thread: {1} -> {2} ({3})", DateTime.Now, proc.ProcessName, proc.Id, pt.Id);
                                         }
+                                        LogWriter.LogWritePID_TID(proc.ProcessName, proc.Id, pt.Id);
                                     }
                                 }
                             }
@@ -463,11 +509,6 @@ namespace DelayExecution_Hunter
                                                 
                                                 score2[e.ProcessID][e.ThreadID][4] += Math.Abs(100.0 / dev);
                                             }
-                                           
-                                            foreach (KeyValuePair<int, List<double>> kvp in score2[e.ProcessID])
-                                            {
-                                                Console.WriteLine(string.Format("TID = {0}, TS = {1}, SCORE = {2}", kvp.Key, kvp.Value[0], kvp.Value[4]));
-                                            }
 
                                             // Log number of IP callbacks by PID/TID
                                             //{ PID : {TID : [IP, COUNT]} }
@@ -482,11 +523,15 @@ namespace DelayExecution_Hunter
                                                 // Count
                                                 PID_TID_IP[e.ProcessID][e.ThreadID].Add(score2[e.ProcessID][e.ThreadID][3].ToString());
                                                 
-                                                foreach (KeyValuePair<int, List<string>> kvp in PID_TID_IP[e.ProcessID])
+                                                if (network_verbose)
                                                 {
-                                                   Console.WriteLine(string.Format("TID = {0}, IP = {1}", kvp.Key, kvp.Value[0]));
+                                                    foreach (KeyValuePair<int, List<string>> kvp in PID_TID_IP[e.ProcessID])
+                                                    {
+                                                        Console.WriteLine(string.Format("Proc = {0} TID = {1}, IP = {2} Count = {3}", Process.GetProcessById(e.ProcessID).ProcessName, kvp.Key, kvp.Value[0], kvp.Value[1]));
+                                                    }
                                                 }
                                             }
+
                                             else if (!PID_TID_IP[e.ProcessID].ContainsKey(e.ThreadID))
                                             {
                                                 PID_TID_IP[e.ProcessID][e.ThreadID] = new List<string>();
@@ -495,19 +540,22 @@ namespace DelayExecution_Hunter
                                                 PID_TID_IP[e.ProcessID][e.ThreadID].Add(e.PayloadByName("ServerName").ToString());
                                                 // Count
                                                 PID_TID_IP[e.ProcessID][e.ThreadID].Add(score2[e.ProcessID][e.ThreadID][3].ToString());
-                                                foreach (KeyValuePair<int, List<string>> kvp in PID_TID_IP[e.ProcessID])
-                                                {
-                                                    Console.WriteLine(string.Format("TID = {0}, IP = {1}", kvp.Key, kvp.Value[0]));
-                                                }
+
                                             }
+
                                             else
                                             {
                                                 // Change count
                                                 PID_TID_IP[e.ProcessID][e.ThreadID][1] = score2[e.ProcessID][e.ThreadID][3].ToString();
-                                                foreach (KeyValuePair<int, List<string>> kvp in PID_TID_IP[e.ProcessID])
+                                                if (network_verbose)
                                                 {
-                                                    Console.WriteLine(string.Format("Proc = {0} TID = {1}, IP = {2} Count = {3}", Process.GetProcessById(e.ProcessID).ProcessName, kvp.Key, kvp.Value[0], kvp.Value[1]));
+                                                    foreach (KeyValuePair<int, List<string>> kvp in PID_TID_IP[e.ProcessID])
+                                                    {
+
+                                                        Console.WriteLine(string.Format("Proc = {0} TID = {1}, IP = {2} Count = {3}", Process.GetProcessById(e.ProcessID).ProcessName, kvp.Key, kvp.Value[0], kvp.Value[1]));
+                                                    }
                                                 }
+                                              
                                                 // ^^ NEED TO LOG THIS
                                             }
 
@@ -567,12 +615,13 @@ namespace DelayExecution_Hunter
 
                                         // Splitted message to get potentially spoofed PPID
                                         string[] messageBits = e.FormattedMessage.Replace(",", string.Empty).Split(' ');
+                                        var command = messageBits[17];
                                         if (verbose || command_history)
                                         {
                                             // This looks so ugly but meh
                                             Console.WriteLine("\n------------------------------\n[!] COMMAND\n\nParent Process: {0} {1}\n -> Child Procces: {2}\nFake Parent Process: {3}\nThread ID: {4}\nMessage: {5}\nTime: {6}\n",
                                                 Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID,
-                                                        e.PayloadByName("ProcessID"), int.Parse(messageBits[10]), e.ThreadID, e.FormattedMessage, DateTime.Now);
+                                                        e.PayloadByName("ProcessID"), int.Parse(messageBits[10]), e.ThreadID, command, DateTime.Now);
                                         }
 
                                         // Check if PPID spoofing
@@ -588,7 +637,7 @@ namespace DelayExecution_Hunter
 
                                         // Log to disk
                                         LogWriter.LogWriteProcess(Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID,
-                                                    e.PayloadByName("ProcessID"), int.Parse(messageBits[10]), e.ThreadID, e.FormattedMessage, isSpoof);
+                                                    e.PayloadByName("ProcessID"), int.Parse(messageBits[10]), e.ThreadID, command, isSpoof);
                                         isSpoof = false;
                                     }
                                 }
@@ -717,5 +766,42 @@ namespace DelayExecution_Hunter
             {
             }
         }
+        static void TerminateTID(int tid)
+        {
+            IntPtr handle = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)tid);
+            if (handle != IntPtr.Zero)
+                SuspendThread(handle);
+            Console.WriteLine("\n[*] Suspended TID: {0}", tid);
+
+        }
+        public enum ThreadAccess : int
+        {
+            TERMINATE = (0x0001),
+            SUSPEND_RESUME = (0x0002),
+            GET_CONTEXT = (0x0008),
+            SET_CONTEXT = (0x0010),
+            SET_INFORMATION = (0x0020),
+            QUERY_INFORMATION = (0x0040),
+            SET_THREAD_TOKEN = (0x0080),
+            IMPERSONATE = (0x0100),
+            DIRECT_IMPERSONATION = (0x0200)
+        }
+
+        
+        //FIX BELOW
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern int SuspendThread(IntPtr hThread);
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr OpenThread(ThreadAccess dwDesiredAccess, bool bInheritHandle,
+           uint dwThreadId);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool CloseHandle(IntPtr hObject);
+
+        [DllImport("kernel32.dll")]
+        static extern bool TerminateThread(IntPtr hThread, uint dwExitCode);
     }
 }

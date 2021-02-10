@@ -2,7 +2,7 @@
 
 Behaviour based monitoring and hunting tool built in C# tool leveraging ETW tracing. Blue teamers can use this tool to detect and respond to potential beacons. Red teamers can use this tool to help improve their opsec and discover new processes that behave like beacons.
 
-Author: Andrew Oliveau (@AndrewOliveau)
+***Author***: Andrew Oliveau (@AndrewOliveau)
 
 ![alt text](https://github.com/3lp4tr0n/BeaconHunter/blob/main/screenshots/beacon_network_score.PNG)
 

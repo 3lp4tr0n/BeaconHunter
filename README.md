@@ -9,7 +9,7 @@ Beacon implants injected in a benign process live in a thread with a `Wait:Delay
 
 Find all processes that contain a thread in a `Wait:DelayExecution` state. 
 
-Leverage ETW tracing to specifically monitor suspicious threads: 
+Leverage ETW tracing to specifically monitor suspicious thread's activity: 
   - network
   - file
   - process termination

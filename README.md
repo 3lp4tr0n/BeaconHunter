@@ -17,7 +17,7 @@ Leverage ETW tracing to specifically monitor suspicious thread's activity:
   - process termination (`kill`)
   - shell commands (`run`,`execute`)
   - registry (TODO)
-  - WMI (TODO)
+  - wmi (TODO)
 
 Score suspicious behavior. Log, display, and take action against them.
   

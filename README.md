@@ -16,11 +16,8 @@ Leverage ETW tracing to specifically monitor suspicious thread's activity:
   - shell commands
   - registry (TODO)
   - WMI (TODO)
-  - IDK Farbs, got any ideas?
 
-Score suspicious behavior.
-
-Log, display, and take action against them.
+Score suspicious behavior. Log, display, and take action against them.
   
 ### Building / Installation
 

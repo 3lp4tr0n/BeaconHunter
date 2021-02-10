@@ -2,6 +2,8 @@
 
 Behaviour based monitoring and hunting tool built in C# tool leveraging ETW tracing.
 
+![alt text](https://github.com/3lp4tr0n/BeaconHunter/blob/main/screenshots/beacon_network_score.PNG)
+
 ### TL;DR
 Beacon implants injected in a benign process live in a thread with a `Wait:DelayExecution` state (Probably related to Cobalt Strike `sleep`).
 

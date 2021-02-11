@@ -6,19 +6,19 @@ namespace DelayExecution_Hunter
 {
     public class LogWriter
     {
-        public static string m_exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        
+        public static string LogDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Logs";
+
         public static void LogWriteProcess(string ProcessName, int ProcessID, object ChildProcess, int SpoofPPID, int ThreadID, string message, bool isSpoof)
         {
             try
             {
-                using (StreamWriter w = File.AppendText(m_exePath + "\\" + "Process_Log.txt"))
+                using (StreamWriter w = File.AppendText(LogDirectory + "\\" + "Process_Log.txt"))
                 {
-                    w.WriteLine("-------------------------------");
+                    w.WriteLine("------------------------------");
                     w.WriteLine("{0}", DateTime.Now);
-                    w.WriteLine("\tParent Process: {0} {1}", ProcessName, ProcessID);
+                    w.WriteLine("\tParent Process: {0} ({1})", ProcessName, ProcessID);
                     w.WriteLine("\t-> Child Process: {0}", ChildProcess);
-                    w.WriteLine("\tSpoof PPID: {0}", SpoofPPID);
+                    w.WriteLine("\tSpoofable PPID: {0}", SpoofPPID);
                     w.WriteLine("\tThread ID: {0}", ThreadID);
                     w.WriteLine("\tMessage: {0}", message);
                     if (isSpoof)
@@ -35,16 +35,16 @@ namespace DelayExecution_Hunter
         {
             try
             {
-                using (StreamWriter w = File.AppendText(m_exePath + "\\" + "Network_Log.txt"))
+                using (StreamWriter w = File.AppendText(LogDirectory + "\\" + "Network_Log.txt"))
                 {
-                    w.WriteLine("-------------------------------");
+                    w.WriteLine("------------------------------");
                     w.WriteLine("{0}", DateTime.Now);
-                    w.WriteLine("\tProcess: {0} {1}", ProcessName, ProcessID);
+                    w.WriteLine("\tProcess: {0} ({1})", ProcessName, ProcessID);
                     w.WriteLine("\tThread ID: {0}", ThreadID);
                     w.WriteLine("\tIP: {0}", ip);
                     w.WriteLine("\tPORT: {0}", port);
                     w.WriteLine("\tCount: {0}", count);
-                    
+
                 }
             }
             catch (Exception)
@@ -55,11 +55,11 @@ namespace DelayExecution_Hunter
         {
             try
             {
-                using (StreamWriter w = File.AppendText(m_exePath + "\\" + "Terminate_Log.txt"))
+                using (StreamWriter w = File.AppendText(LogDirectory + "\\" + "Terminate_Log.txt"))
                 {
-                    w.WriteLine("-------------------------------");
+                    w.WriteLine("------------------------------");
                     w.WriteLine("{0}", DateTime.Now);
-                    w.WriteLine("\tProcess: {0} {1}", ProcessName, ProcessID);
+                    w.WriteLine("\tProcess: {0} ({1})", ProcessName, ProcessID);
                     w.WriteLine("\tThread ID: {0}", ThreadID);
                     w.WriteLine("\tVictim PID: {0}", VictimID);
                 }
@@ -69,18 +69,18 @@ namespace DelayExecution_Hunter
             }
         }
         public static void LogWriteFile(string ProcessName, object ProcessID, object ThreadID, string Action, string filename = "*")
-        { 
+        {
             try
             {
-                using (StreamWriter w = File.AppendText(m_exePath + "\\" + "File_Log.txt"))
+                using (StreamWriter w = File.AppendText(LogDirectory + "\\" + "File_Log.txt"))
                 {
-                    w.WriteLine("-------------------------------");
+                    w.WriteLine("------------------------------");
                     w.WriteLine("{0}", DateTime.Now);
-                    w.WriteLine("\tProcess: {0} {1}", ProcessName, ProcessID);
+                    w.WriteLine("\tProcess: {0} ({1})", ProcessName, ProcessID);
                     w.WriteLine("\tThread ID: {0}", ThreadID);
                     w.WriteLine("\tAction: {0}", Action);
                     w.WriteLine("\tPath: {0}", filename);
-                    
+
                 }
             }
             catch (Exception)
@@ -91,11 +91,47 @@ namespace DelayExecution_Hunter
         {
             try
             {
-                using (StreamWriter w = File.AppendText(m_exePath + "\\" + "Suspicious_PID_TID_Log.txt"))
+                using (StreamWriter w = File.AppendText(LogDirectory + "\\" + "Suspicious_PID_TID_Log.txt"))
                 {
-                    w.WriteLine("-------------------------------");
+                    w.WriteLine("------------------------------");
                     w.WriteLine("\n{0} => New Process with suspicious Thread: {1} -> {2} ({3})", DateTime.Now, ProcessName, ProcessID, ThreadID);
-                    
+
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+        public static void LogWriteSuspendTID(string process, int pid, int tid, double score)
+        {
+            try
+            {
+                using (StreamWriter w = File.AppendText(LogDirectory + "\\" + "Suspended_TID_Log.txt"))
+                {
+                    w.WriteLine("------------------------------");
+                    w.WriteLine("{0}", DateTime.Now);
+                    w.WriteLine("\tProcess: {0} ({1})", process, pid);
+                    w.WriteLine("\tTID: {0}", tid);
+                    w.WriteLine("\tScore: {0}", score);
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        public static void LogWriteScoreThreshold(string process, int pid, int tid, double score, double threshold)
+        {
+            try
+            {
+                using (StreamWriter w = File.AppendText(LogDirectory + "\\" + "Score_Threshold_Log.txt"))
+                {
+                    w.WriteLine("------------------------------");
+                    w.WriteLine("{0}", DateTime.Now);
+                    w.WriteLine("\tProcess: {0} ({1})", process, pid);
+                    w.WriteLine("\tTID: {0}", tid);
+                    w.WriteLine("\tScore: {0}", score);
+                    w.WriteLine("\tThreshold: {0}", threshold);
                 }
             }
             catch (Exception)

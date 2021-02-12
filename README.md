@@ -19,7 +19,7 @@ Beacon implants injected in a benign process live in a thread with a `Wait:Delay
 
 Score suspicious behavior. Log, display, and take action against them.
   
-### Building / Installation
+## Building / Installation
 
 #### Pre-compiled 
 

@@ -9,7 +9,7 @@ Behaviour based monitoring and hunting tool built in C# tool leveraging ETW trac
 ### TL;DR
 Beacon implants injected in a benign process live in a thread with a `Wait:DelayExecution` state (probably related to Cobalt Strike's `sleep`). Find all processes that contain a thread in a `Wait:DelayExecution` state. Then leverage ETW tracing to specifically monitor suspicious thread's activity:
 
-  - HTTPS callbacks
+  - HTTPS callback frequency
   - DNS queries
   - File system (`cd`,`ls`,`upload`,`rm`)
   - Process termination (`kill`)

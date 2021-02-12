@@ -13,7 +13,7 @@ Beacon implants injected in a benign process live in a thread with a `Wait:Delay
   - DNS queries
   - File system (`cd`,`ls`,`upload`,`rm`)
   - Process termination (`kill`)
-  - shell commands (`run`,`execute`)
+  - Shell commands (`run`,`execute`)
   - Registry (TODO)
   - WMI (TODO)
 

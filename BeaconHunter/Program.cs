@@ -10,11 +10,11 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 
-namespace DelayExecution_Hunter
+namespace BeaconHunter
 {
     class Program
     {
-        // variables 
+        // Global variables 
         private static bool action = false;
         private static bool monitor = false;
         private static bool isSpoof = false;
@@ -33,10 +33,13 @@ namespace DelayExecution_Hunter
         private static bool terminate_history = false;
         private static bool file_history = false;
         private static bool ip_stats = false;
+        private static bool dns_history = false;
 
         // Action bools
         private static bool network_score_threshold = false;
         private static string threshold;
+        private static bool sysmon_protect = true;
+        private static int sysmon_pid = 0;
 
         // Beacon score 
         private static Dictionary<int, Dictionary<int, List<double>>> score = new Dictionary<int, Dictionary<int, List<double>>>();
@@ -50,6 +53,8 @@ namespace DelayExecution_Hunter
 
         static void Main()
         {
+            // You know it
+            AsciiArt.BeaconHunter_AsciiArt();
 
             // Start ETW collector thread
             Thread etwcollect_thread = new Thread(new ThreadStart(ETWcollect));
@@ -67,11 +72,12 @@ namespace DelayExecution_Hunter
                 if (monitor == false && action == false)
                 {
                     Console.WriteLine("\n------------------------------");
-                    Console.WriteLine("\nBeaconHunter - @AndrewOliveau");
+                    Console.WriteLine("\nMAIN MENU");
                     Console.WriteLine("\n\n[1] Monitor");
                     Console.WriteLine("[2] Action");
-                    Console.WriteLine("[3] Verbose (Default ON)");
-                    Console.WriteLine("[4] Network callback count verbose (Default OFF)\n");
+                    Console.WriteLine("[3] System Verbose (default ON)");
+                    Console.WriteLine("[4] Network Verbose (default OFF)");
+                    Console.WriteLine("[5] Protect Sysmon (default ON)\n");
                     Console.Write("> ");
                     input = Console.ReadLine();
 
@@ -109,11 +115,26 @@ namespace DelayExecution_Hunter
                             network_verbose = false;
                         }
                     }
+                    else if (input == "5")
+                    {
 
+                        if (!sysmon_protect)
+                        {
+                            Console.WriteLine("\n[*] Sysmon Protection turned ON");
+                            sysmon_protect = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine("\n[*] Sysmon Protection turned OFF");
+                            sysmon_protect = false;
+                        }
+
+                    }
                     else
                     {
                         Console.WriteLine("");
                     }
+
                 }
 
                 if (monitor)
@@ -122,11 +143,12 @@ namespace DelayExecution_Hunter
                     Console.WriteLine("\nMONITOR\n");
                     Console.WriteLine("   [1] Beacon network score");
                     Console.WriteLine("   [2] IP stats");
-                    Console.WriteLine("   [3] Suspicious PID/TID history");
-                    Console.WriteLine("   [4] Beacon command history");
-                    Console.WriteLine("   [5] Process terminate history");
-                    Console.WriteLine("   [6] File history");
-                    Console.WriteLine("   [7] Main menu\n");
+                    Console.WriteLine("   [3] DNS queries");
+                    Console.WriteLine("   [4] Suspicious PID/TID history");
+                    Console.WriteLine("   [5] Beacon shell/command history");
+                    Console.WriteLine("   [6] Process terminate history");
+                    Console.WriteLine("   [7] File system history");
+                    Console.WriteLine("   [8] Main menu\n");
                     Console.Write("> ");
                     var user_input = Console.ReadLine();
 
@@ -135,6 +157,9 @@ namespace DelayExecution_Hunter
                         Console.WriteLine("\n------------------------------");
                         Console.WriteLine("\nNetwork Beacon Score");
                         Console.WriteLine("\n------------------------------");
+
+                        NetworkBeaconScore();
+
 
                         beacon_score = true;
                         while (true)
@@ -159,6 +184,8 @@ namespace DelayExecution_Hunter
                         Console.WriteLine("\nIP Stats");
                         Console.WriteLine("\n------------------------------");
 
+                        IPStats();
+
                         ip_stats = true;
 
                         while (true)
@@ -177,6 +204,29 @@ namespace DelayExecution_Hunter
                         }
                     }
                     else if (user_input == "3")
+                    {
+                        Console.WriteLine("\n------------------------------");
+                        Console.WriteLine("\nDNS Queries");
+                        Console.WriteLine("\n------------------------------");
+
+                        PrintLogs("DNS_Log.txt");
+                        dns_history = true;
+                        while (true)
+                        {
+                            var input3 = Console.ReadLine();
+                            if (input3 == "q")
+                            {
+                                dns_history = false;
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("\n[*] Enter 'q' to go back.\n");
+                                Console.Write("> ");
+                            }
+                        }
+                    }
+                    else if (user_input == "4")
                     {
                         Console.WriteLine("\n------------------------------");
                         Console.WriteLine("\nSuspicious PID/TID");
@@ -200,7 +250,7 @@ namespace DelayExecution_Hunter
                             }
                         }
                     }
-                    else if (user_input == "4")
+                    else if (user_input == "5")
                     {
                         Console.WriteLine("\n------------------------------");
                         Console.WriteLine("\nBeacon Command History");
@@ -223,7 +273,7 @@ namespace DelayExecution_Hunter
                             }
                         }
                     }
-                    else if (user_input == "5")
+                    else if (user_input == "6")
                     {
                         Console.WriteLine("\n------------------------------");
                         Console.WriteLine("\nTerminate Process History");
@@ -247,7 +297,7 @@ namespace DelayExecution_Hunter
                         }
                     }
 
-                    else if (user_input == "6")
+                    else if (user_input == "7")
                     {
                         Console.WriteLine("\n------------------------------");
                         Console.WriteLine("\nFile History");
@@ -272,7 +322,7 @@ namespace DelayExecution_Hunter
                         }
                     }
 
-                    else if (user_input == "7")
+                    else if (user_input == "8")
                     {
                         monitor = false;
                     }
@@ -345,7 +395,7 @@ namespace DelayExecution_Hunter
                                 else if (threshold == "0")
                                 {
                                     network_score_threshold = false;
-                                    Console.WriteLine("\n[*] Removed threshold for thread termination.\n");
+                                    Console.WriteLine("\n[*] Removed threshold for thread suspension.\n");
                                     break;
                                 }
                                 else if (Convert.ToDouble(threshold) <= 1)
@@ -358,13 +408,10 @@ namespace DelayExecution_Hunter
                                 {
                                     network_score_threshold = true;
                                     ThresholdChecker(Convert.ToDouble(threshold));
-
                                 }
                             }
                             catch (System.FormatException)
                             {
-                                // Console.WriteLine("\n[!] Incorrect input. Enter 'q' to go back.\n");
-
                             }
                         }
                     }
@@ -431,10 +478,8 @@ namespace DelayExecution_Hunter
 
                 foreach (Process proc in AllProcesses)
                 {
-
                     if (!threadIDs.ContainsKey(proc.Id))
                     {
-
                         try
                         {
                             ProcessThreadCollection myThreads = proc.Threads;
@@ -450,7 +495,7 @@ namespace DelayExecution_Hunter
                                             if (verbose || pid_tid_history)
                                             {
                                                 // Notify new processes
-                                                Console.WriteLine("\n{0} => New Process with suspicious Thread: {1} -> {2} ({3})", DateTime.Now, proc.ProcessName, proc.Id, pt.Id);
+                                                Console.WriteLine("\n[*] New Process with suspicious Thread: {0} ({1}) -> {2}", proc.ProcessName, proc.Id, pt.Id);
                                             }
 
                                             // Log suspicious PID/TID
@@ -467,10 +512,10 @@ namespace DelayExecution_Hunter
                                             score[proc.Id] = new Dictionary<int, List<double>>();
                                             score[proc.Id][pt.Id] = new List<double>();
                                             score[proc.Id][pt.Id].Add(milliseconds);
-                                            score[proc.Id][pt.Id].Add(0); //time_delta
-                                            score[proc.Id][pt.Id].Add(0); //derivative
-                                            score[proc.Id][pt.Id].Add(0); //Count
-                                            score[proc.Id][pt.Id].Add(1); //Score
+                                            score[proc.Id][pt.Id].Add(0); // Time delta
+                                            score[proc.Id][pt.Id].Add(0); // Derivative
+                                            score[proc.Id][pt.Id].Add(0); // Count
+                                            score[proc.Id][pt.Id].Add(1); // Score
                                         }
 
                                         else if (threadIDs[proc.Id].Count > 0)
@@ -478,7 +523,7 @@ namespace DelayExecution_Hunter
                                             if (verbose || pid_tid_history)
                                             {
                                                 // Notify new processes
-                                                Console.WriteLine("\n{0} => New Process with suspicious Thread: {1} -> {2} ({3})", DateTime.Now, proc.ProcessName, proc.Id, pt.Id);
+                                                Console.WriteLine("\n[*] New Process with suspicious Thread: {0} ({1}) -> {2}", proc.ProcessName, proc.Id, pt.Id);
                                             }
 
                                             // Log suspicious PID/TID
@@ -493,10 +538,10 @@ namespace DelayExecution_Hunter
                                             // Initialize score
                                             score[proc.Id][pt.Id] = new List<double>();
                                             score[proc.Id][pt.Id].Add(milliseconds);
-                                            score[proc.Id][pt.Id].Add(0); //time_delta
-                                            score[proc.Id][pt.Id].Add(0); //derivative
-                                            score[proc.Id][pt.Id].Add(0); //Count
-                                            score[proc.Id][pt.Id].Add(1); //Score
+                                            score[proc.Id][pt.Id].Add(0); // Time delta
+                                            score[proc.Id][pt.Id].Add(0); // Derivative
+                                            score[proc.Id][pt.Id].Add(0); // Count
+                                            score[proc.Id][pt.Id].Add(1); // Score
 
                                         }
 
@@ -527,14 +572,14 @@ namespace DelayExecution_Hunter
                                         threadIDs[proc.Id].Add(pt.Id);
                                         score[proc.Id][pt.Id] = new List<double>();
                                         score[proc.Id][pt.Id].Add(milliseconds);
-                                        score[proc.Id][pt.Id].Add(0); //time_delta
-                                        score[proc.Id][pt.Id].Add(0); //derivative
-                                        score[proc.Id][pt.Id].Add(0); //Count
-                                        score[proc.Id][pt.Id].Add(1); //Score
+                                        score[proc.Id][pt.Id].Add(0); // Time_delta
+                                        score[proc.Id][pt.Id].Add(0); // Derivative
+                                        score[proc.Id][pt.Id].Add(0); // Count
+                                        score[proc.Id][pt.Id].Add(1); // Score
 
                                         if (verbose || pid_tid_history)
                                         {
-                                            Console.WriteLine("\n{0} => New Process with suspicious Thread: {1} -> {2} ({3})", DateTime.Now, proc.ProcessName, proc.Id, pt.Id);
+                                            Console.WriteLine("\n[*] New Process with suspicious Thread: {0} ({1}) -> {2}", proc.ProcessName, proc.Id, pt.Id);
                                         }
                                         LogWriter.LogWritePID_TID(proc.ProcessName, proc.Id, pt.Id);
                                     }
@@ -544,6 +589,16 @@ namespace DelayExecution_Hunter
                         }
 
                     }
+
+                    if (sysmon_protect)
+                    {
+                        // Find sysmon process
+                        if (proc.ProcessName == "Sysmon")
+                        {
+                            sysmon_pid = proc.Id;
+                        }
+                    }
+
                 }
 
                 // Remove dead processes from Dictionaries
@@ -561,7 +616,7 @@ namespace DelayExecution_Hunter
 
                         if (verbose)
                         {
-                            Console.WriteLine("\nDEAD/REMOVED PID: {0}", pid);
+                            Console.WriteLine("\n[!] DEAD/REMOVED PID: {0}\n", pid);
                         }
                     }
                 }
@@ -588,11 +643,12 @@ namespace DelayExecution_Hunter
                         };
 
                         // Enable ETW providers to capture data
-                        session1.EnableProvider("Microsoft-Windows-WinINet", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational); // network traffic
-                        session1.EnableProvider("Microsoft-Windows-Kernel-Process", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x00); // process start and commands
-                        session1.EnableProvider("Microsoft-Windows-Kernel-File", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x00); // file and diretory changes
-                        session1.EnableProvider("Microsoft-Windows-Kernel-Audit-API-Calls", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x00); // remote process termination
-                        session1.EnableProvider("Microsoft-Windows-DNS-Client", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x00);
+                        session1.EnableProvider("Microsoft-Windows-WinINet", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational); // Network traffic
+                        session1.EnableProvider("Microsoft-Windows-Kernel-Process", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x00); // Process start and commands
+                        session1.EnableProvider("Microsoft-Windows-Kernel-File", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x00); // File and diretory changes
+                        session1.EnableProvider("Microsoft-Windows-Kernel-Audit-API-Calls", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x00); // Remote process termination
+                        session1.EnableProvider("Microsoft-Windows-DNS-Client", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x00); // DNS queries
+
                         var parser = session1.Source.Dynamic;
 
                         parser.All += e =>
@@ -623,11 +679,10 @@ namespace DelayExecution_Hunter
                                             score[e.ProcessID][e.ThreadID][2] = dev;
 
                                             //score Count
-
                                             score[e.ProcessID][e.ThreadID][3] += 1;
 
                                             // Calculate score for process
-                                            // If the derivative is 0, add fixed points instead of infinity since formula is 1/x
+                                            // If the derivative is 0, add fixed points instead of infinity since formula is 100/x
                                             if (dev == 0)
                                             {
 
@@ -658,7 +713,7 @@ namespace DelayExecution_Hunter
                                                 {
                                                     foreach (KeyValuePair<int, List<string>> tid in PID_TID_IP[e.ProcessID])
                                                     {
-                                                        Console.WriteLine(string.Format("[*] Network callback -> Process: {0} ({1}), TID: {2}, IP: {3}, Port: {4}, Count: {5}", Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, tid.Key, tid.Value[0], tid.Value[1], tid.Value[2]));
+                                                        Console.WriteLine(string.Format("[*] Network callback -> Process: {0} ({1}) | TID: {2} | RHOST: {3} | RPORT: {4} | Count: {5}", Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, tid.Key, tid.Value[0], tid.Value[1], tid.Value[2]));
                                                     }
                                                 }
                                             }
@@ -685,7 +740,7 @@ namespace DelayExecution_Hunter
                                                     foreach (KeyValuePair<int, List<string>> tid in PID_TID_IP[e.ProcessID])
                                                     {
 
-                                                        Console.WriteLine(string.Format("[*] Network callback -> Process: {0} ({1}), TID: {2}, IP: {3}, Port: {4}, Count: {5}", Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, tid.Key, tid.Value[0], tid.Value[1], tid.Value[2]));
+                                                        Console.WriteLine(string.Format("[*] Network callback -> Process: {0} ({1}) | TID: {2} | RHOST: {3} | RPORT: {4} | Count: {5}", Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, tid.Key, tid.Value[0], tid.Value[1], tid.Value[2]));
                                                     }
                                                 }
                                             }
@@ -707,39 +762,13 @@ namespace DelayExecution_Hunter
                                                 Console.WriteLine(" 1st derivative of delta: {0} ms", dev);
                                                 Console.WriteLine(" Date/Time: {0}\n", e.TimeStamp);
 
-
-                                                // Create table
-                                                var table = new ConsoleTable("Process", "PID", "TID", "Callback Count", "SCORE");
-
-                                                foreach (int pid in score.Keys)
-                                                {
-
-                                                    foreach (KeyValuePair<int, List<double>> tid in score[pid])
-                                                    {
-                                                        table.AddRow(Process.GetProcessById(pid).ProcessName, pid, tid.Key, tid.Value[3], tid.Value[4]);
-                                                    }
-
-                                                }
-                                                table.Write();
-                                                Console.WriteLine("\n------------------------------");
+                                                NetworkBeaconScore();
                                             }
 
                                             // Show IP and PORT stats by thread
                                             if (ip_stats)
                                             {
-                                                var table2 = new ConsoleTable("Process", "PID", "TID", "IP", "PORT", "Callback Count");
-
-                                                foreach (int pid in PID_TID_IP.Keys)
-                                                {
-
-                                                    foreach (KeyValuePair<int, List<string>> tid in PID_TID_IP[pid])
-                                                    {
-                                                        table2.AddRow(Process.GetProcessById(pid).ProcessName, pid, tid.Key, tid.Value[0], tid.Value[1], tid.Value[2]);
-                                                    }
-
-                                                }
-                                                Console.Clear();
-                                                table2.Write();
+                                                IPStats();
                                             }
 
                                             // Check if TID above threshold
@@ -789,7 +818,6 @@ namespace DelayExecution_Hunter
                                 }
 
                                 // Log remote process termination from suspicious PID/TID
-                                // if remote process is Sysmon, delete process (TODO)
                                 // need to check different OS implementations
                                 else if (e.ProviderName == "Microsoft-Windows-Kernel-Audit-API-Calls")
                                 {
@@ -804,8 +832,18 @@ namespace DelayExecution_Hunter
                                             {
                                                 Console.WriteLine("\n------------------------------");
                                                 Console.WriteLine("[!] TERMINATION");
-                                                Console.WriteLine("\nProcess: {0}\nPID: {1}\nTID: {2}\nVictim: {3}\n", Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, e.ThreadID, e.PayloadByName("TargetProcessId"));
+                                                Console.WriteLine("\nProcess: {0} ({1})\nTID: {2}\nVictim: {3}\n", Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, e.ThreadID, e.PayloadByName("TargetProcessId"));
                                             }
+
+                                            if (sysmon_protect)
+                                            {
+                                                if ((int)e.PayloadByName("TargetProcessId") == sysmon_pid)
+                                                {
+                                                    SuspendTID(e.ThreadID);
+                                                    Console.WriteLine("[***] Suspended TID {0} from {1} ({2}) for terminating Sysmon.exe", e.ThreadID, Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID);
+                                                }
+                                            }
+
 
                                             LogWriter.LogWriteTermination(Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, e.ThreadID, e.PayloadByName("TargetProcessId"));
 
@@ -826,7 +864,7 @@ namespace DelayExecution_Hunter
                                             if (verbose || file_history)
                                             {
                                                 Console.WriteLine("\n------------------------------\n[!] FILE\n\nProcess: {0} ({1})\nTID: {2}\n", Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, e.ThreadID);
-                                                Console.WriteLine("[*] Directory Enumeration");
+                                                Console.WriteLine("[*] Directory Enumeration\n");
                                             }
 
                                             // Log to disk
@@ -839,7 +877,7 @@ namespace DelayExecution_Hunter
                                             if (verbose || file_history)
                                             {
                                                 Console.WriteLine("\n------------------------------\n[!] FILE\n\nProcess: {0} ({1})\nTID: {2}\n", Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, e.ThreadID);
-                                                Console.WriteLine("[*] New File -> {0}", e.PayloadByName("FileName"));
+                                                Console.WriteLine("[*] New File -> {0}\n", e.PayloadByName("FileName"));
                                             }
 
                                             // Log to disk
@@ -852,11 +890,11 @@ namespace DelayExecution_Hunter
                                             if (verbose || file_history)
                                             {
                                                 Console.WriteLine("\n------------------------------\n[!] FILE\n\nProcess: {0} ({1})\nTID: {2}\n", Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, e.ThreadID);
-                                                Console.WriteLine("[*] Removed/Touched File -> {0}", e.PayloadByName("FileName"));
+                                                Console.WriteLine("[*] Removed/Touched File -> {0}\n", e.PayloadByName("FileName"));
                                             }
 
                                             // Log to disk
-                                            LogWriter.LogWriteFile(Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, e.ThreadID, "New File", e.PayloadByName("FileName").ToString());
+                                            LogWriter.LogWriteFile(Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, e.ThreadID, "Removed/Touched File", e.PayloadByName("FileName").ToString());
                                         }
 
                                         // Changing directory detection
@@ -865,7 +903,7 @@ namespace DelayExecution_Hunter
                                             if (verbose || file_history)
                                             {
                                                 Console.WriteLine("\n------------------------------\n[!] FILE\n\nProcess: {0} ({1})\nTID: {2}\n", Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, e.ThreadID);
-                                                Console.WriteLine("[*] Change directory -> {0}", e.PayloadByName("FileName"));
+                                                Console.WriteLine("[*] Change directory -> {0}\n", e.PayloadByName("FileName"));
                                             }
                                             // Log to disk
                                             LogWriter.LogWriteFile(Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, e.ThreadID, "Change Directory", e.PayloadByName("FileName").ToString());
@@ -878,16 +916,18 @@ namespace DelayExecution_Hunter
                                 {
                                     if (threadIDs[e.ProcessID].Contains(e.ThreadID))
                                     {
-                                        if (network_verbose)
+                                        if (e.PayloadByName("QueryName").ToString() != "" && e.PayloadByName("QueryResults").ToString() != "")
                                         {
-                                            if (e.PayloadByName("QueryName").ToString() != "" && e.PayloadByName("QueryResults").ToString() != "")
+                                            if (network_verbose || dns_history)
                                             {
                                                 Console.WriteLine("\n------------------------------\n[!] DNS\n\nProcess: {0} ({1})\nTID: {2}\n\n[*] Query: {3}\n[*] Result: {4}\n", Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, e.ThreadID, e.PayloadByName("QueryName"), e.PayloadByName("QueryResults"));
                                             }
+                                            LogWriter.LogwriteDNS(Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, e.ThreadID, e.PayloadByName("QueryName").ToString(), e.PayloadByName("QueryResults").ToString());
                                         }
                                     }
                                 }
                             }
+
                             catch
                             {
                             }
@@ -943,7 +983,7 @@ namespace DelayExecution_Hunter
             }
             else
             {
-                Console.WriteLine("\n[*] TID {0} does not exists.\n", tid);
+                Console.WriteLine("\n[*] TID {0} does not exist\n", tid);
             }
         }
 
@@ -951,26 +991,69 @@ namespace DelayExecution_Hunter
         {
             foreach (int pid in score.Keys)
             {
-                foreach (KeyValuePair<int, List<double>> tid in score[pid])
+                try
                 {
-                    if (tid.Value[4] >= threshold)
+                    foreach (KeyValuePair<int, List<double>> tid in score[pid])
                     {
-                        // Suspend Thread
-                        IntPtr handle = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)tid.Key);
-                        if (handle != IntPtr.Zero)
-                            SuspendThread(handle);
+                        if (tid.Value[4] >= threshold)
+                        {
+                            // Suspend Thread
+                            IntPtr handle = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)tid.Key);
+                            if (handle != IntPtr.Zero)
+                                SuspendThread(handle);
 
-                        // Log and stop tracking
-                        LogWriter.LogWriteScoreThreshold(Process.GetProcessById(pid).ProcessName, pid, tid.Key, tid.Value[4], threshold);
-                        threadIDs[pid].RemoveAll(p => p == tid.Key);
-                        score[pid].Remove(tid.Key);
+                            // Log and stop tracking
+                            LogWriter.LogWriteScoreThreshold(Process.GetProcessById(pid).ProcessName, pid, tid.Key, tid.Value[4], threshold);
+                            threadIDs[pid].RemoveAll(p => p == tid.Key);
+                            score[pid].Remove(tid.Key);
 
-                        Console.WriteLine("\n[***] SCORE THRESHOLD -> Terminated TID {0} from {1} ({2}) at threshold {3}\n", tid.Key, Process.GetProcessById(pid).ProcessName, pid, threshold);
+                            Console.WriteLine("\n[***] SCORE THRESHOLD -> Suspended TID {0} from {1} ({2}) at threshold {3}\n", tid.Key, Process.GetProcessById(pid).ProcessName, pid, threshold);
+                        }
                     }
+                }
+                catch
+                {
                 }
             }
         }
 
+        static void NetworkBeaconScore()
+        {
+
+            // Create table
+            var table = new ConsoleTable("Process", "PID", "TID", "Callback Count", "SCORE");
+
+            foreach (int pid in score.Keys)
+            {
+
+                foreach (KeyValuePair<int, List<double>> tid in score[pid])
+                {
+                    table.AddRow(Process.GetProcessById(pid).ProcessName, pid, tid.Key, tid.Value[3], tid.Value[4]);
+                }
+
+            }
+            table.Write();
+            Console.WriteLine("\n------------------------------");
+        }
+
+        static void IPStats()
+        {
+            var table2 = new ConsoleTable("Process", "PID", "TID", "RHOST", "RPORT", "Callback Count");
+
+            foreach (int pid in PID_TID_IP.Keys)
+            {
+
+                foreach (KeyValuePair<int, List<string>> tid in PID_TID_IP[pid])
+                {
+                    table2.AddRow(Process.GetProcessById(pid).ProcessName, pid, tid.Key, tid.Value[0], tid.Value[1], tid.Value[2]);
+                }
+
+            }
+            Console.Clear();
+            table2.Write();
+        }
+
+        // P/Invoke Win API
         public enum ThreadAccess : int
         {
             TERMINATE = (0x0001),
@@ -985,21 +1068,11 @@ namespace DelayExecution_Hunter
         }
 
 
-        //FIX BELOW
-
-        // P/Invoke Win API
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern int SuspendThread(IntPtr hThread);
 
         [DllImport("kernel32.dll")]
         static extern IntPtr OpenThread(ThreadAccess dwDesiredAccess, bool bInheritHandle,
            uint dwThreadId);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool CloseHandle(IntPtr hObject);
-
-        [DllImport("kernel32.dll")]
-        static extern bool TerminateThread(IntPtr hThread, uint dwExitCode);
     }
 }

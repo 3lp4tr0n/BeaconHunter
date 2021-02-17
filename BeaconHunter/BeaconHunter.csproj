@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C8BBBE2A-9528-40A5-B4DF-34BC64AEB70B}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>DelayExecution_Hunter</RootNamespace>
-    <AssemblyName>DelayExecution_Hunter</AssemblyName>
+    <RootNamespace>BeaconHunter</RootNamespace>
+    <AssemblyName>BeaconHunter</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -75,6 +75,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsciiArt.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

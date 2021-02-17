@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 
-namespace DelayExecution_Hunter
+namespace BeaconHunter
 {
     public class LogWriter
     {
@@ -94,7 +94,7 @@ namespace DelayExecution_Hunter
                 using (StreamWriter w = File.AppendText(LogDirectory + "\\" + "Suspicious_PID_TID_Log.txt"))
                 {
                     w.WriteLine("------------------------------");
-                    w.WriteLine("\n{0} => New Process with suspicious Thread: {1} -> {2} ({3})", DateTime.Now, ProcessName, ProcessID, ThreadID);
+                    w.WriteLine("\n{0} => New Process with suspicious Thread: {1} ({2}) -> {3}", DateTime.Now, ProcessName, ProcessID, ThreadID);
 
                 }
             }
@@ -132,6 +132,24 @@ namespace DelayExecution_Hunter
                     w.WriteLine("\tTID: {0}", tid);
                     w.WriteLine("\tScore: {0}", score);
                     w.WriteLine("\tThreshold: {0}", threshold);
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+        public static void LogwriteDNS(string process, int pid, int tid, string query, string result)
+        {
+            try
+            {
+                using (StreamWriter w = File.AppendText(LogDirectory + "\\" + "DNS_Log.txt"))
+                {
+                    w.WriteLine("------------------------------");
+                    w.WriteLine("{0}", DateTime.Now);
+                    w.WriteLine("\tProcess: {0} ({1})", process, pid);
+                    w.WriteLine("\tTID: {0}", tid);
+                    w.WriteLine("\tQuery: {0}", query);
+                    w.WriteLine("\tResult: {0}", result);
                 }
             }
             catch (Exception)

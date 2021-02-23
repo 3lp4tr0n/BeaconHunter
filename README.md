@@ -14,8 +14,6 @@ Beacon implants injected in a benign process live in a thread with a `Wait:Delay
   - File system (`cd`,`ls`,`upload`,`rm`)
   - Process termination (`kill`)
   - Shell commands (`run`,`execute`)
-  - Registry (TODO)
-  - WMI (TODO)
 
 Score suspicious behavior. Log, display, and take action against them.
   

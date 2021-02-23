@@ -1,0 +1,22 @@
+#pragma namespace ("\\\\.\\root\\subscription")
+
+instance of CommandLineEventConsumer as $Cons
+{
+  CommandLineTemplate = "cmd.exe /c sc start sysmon";
+};
+
+instance of __EventFilter as $Filt
+{
+    Name = "I_SHALL_STAY";
+    Query = "SELECT * FROM __InstanceDeletionEvent WITHIN 5 "
+        "WHERE TargetInstance ISA \"Win32_Process\" "
+        "AND TargetInstance.Name = \"Sysmon.exe\"";
+    QueryLanguage = "WQL";
+    EventNamespace = "root\\cimv2";
+};
+
+instance of __FilterToConsumerBinding
+{
+    Filter = $Filt;
+    Consumer = $Cons;
+};

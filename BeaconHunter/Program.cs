@@ -50,6 +50,9 @@ namespace BeaconHunter
         // Keep record of PID / TID network callback to IP      //{ PID : {TID : [IP, COUNT]} }
         private static Dictionary<int, Dictionary<int, List<string>>> PID_TID_IP = new Dictionary<int, Dictionary<int, List<string>>>();
 
+        // Ignore TID list
+        private static List<int> Ignore_TID = new List<int>();
+
 
         static void Main()
         {
@@ -148,7 +151,8 @@ namespace BeaconHunter
                     Console.WriteLine("   [5] Beacon shell/command history");
                     Console.WriteLine("   [6] Process terminate history");
                     Console.WriteLine("   [7] File system history");
-                    Console.WriteLine("   [8] Main menu\n");
+                    Console.WriteLine("   [8] Ignore TID");
+                    Console.WriteLine("   [9] Main menu\n");
                     Console.Write("> ");
                     var user_input = Console.ReadLine();
 
@@ -321,8 +325,37 @@ namespace BeaconHunter
                             }
                         }
                     }
-
                     else if (user_input == "8")
+                    {
+                        Console.WriteLine("\n------------------------------");
+                        Console.WriteLine("\nIgnore TID");
+                        Console.WriteLine("\n------------------------------\n");
+
+                        while (true)
+                        {
+                            try
+                            {
+                                Console.Write("[*] Enter TID to ignore from monitoring ('q' to go back) > ");
+                                var input3 = Console.ReadLine();
+                                if (input3 == "q")
+                                {
+
+                                    break;
+                                }
+
+                                else if (Convert.ToInt32(input3) < 65535)
+                                {
+                                    Ignore_TID.Add(Convert.ToInt32(input3));
+                                    Console.WriteLine("[*] Ignoring TID {0}", input3);
+                                }
+                            }
+                            catch 
+                            {
+                                //Console.WriteLine("[!] Invalid input ");
+                            }
+                        }
+                    }
+                    else if (user_input == "9")
                     {
                         monitor = false;
                     }
@@ -365,7 +398,7 @@ namespace BeaconHunter
                             }
                             catch (System.OverflowException)
                             {
-                                Console.WriteLine("\n[!] Value was either too large or too small for a thread.\n");
+                                Console.WriteLine("\n[!] Value was either too large or too small for TID.\n");
                             }
                         }
 
@@ -647,7 +680,7 @@ namespace BeaconHunter
                         session1.EnableProvider("Microsoft-Windows-Kernel-Process", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x00); // Process start and commands
                         session1.EnableProvider("Microsoft-Windows-Kernel-File", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x00); // File and diretory changes
                         session1.EnableProvider("Microsoft-Windows-Kernel-Audit-API-Calls", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x00); // Remote process termination
-                        session1.EnableProvider("Microsoft-Windows-DNS-Client", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x00); // DNS queries
+                        session1.EnableProvider("Microsoft-Windows-DNS-Client", Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x00); // DNS queries                        
 
                         var parser = session1.Source.Dynamic;
 
@@ -791,7 +824,7 @@ namespace BeaconHunter
                                         var command = messageBits[17];
                                         var spoofable_process = int.Parse(messageBits[10]);
 
-                                        if (verbose || command_history)
+                                        if ((verbose || command_history))
                                         {
                                             // This looks so ugly but whatever
                                             Console.WriteLine("\n------------------------------\n[!] COMMAND\n\nParent Process: {0} {1}\n -> Child Procces: {2}\nSpoofable Process: {3}\nThread ID: {4}\nMessage: {5}\nTime: {6}\n",
@@ -887,7 +920,7 @@ namespace BeaconHunter
                                         // Removed or touched file/path detection
                                         else if (e.PayloadByName("CreateOptions").ToString() == "18874368" || e.PayloadByName("CreateOptions").ToString() == "18874432")
                                         {
-                                            if (verbose || file_history)
+                                            if ((verbose || file_history) && !Ignore_TID.Contains(e.ThreadID))
                                             {
                                                 Console.WriteLine("\n------------------------------\n[!] FILE\n\nProcess: {0} ({1})\nTID: {2}\n", Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, e.ThreadID);
                                                 Console.WriteLine("[*] Removed/Touched File -> {0}\n", e.PayloadByName("FileName"));
@@ -918,7 +951,7 @@ namespace BeaconHunter
                                     {
                                         if (e.PayloadByName("QueryName").ToString() != "" && e.PayloadByName("QueryResults").ToString() != "")
                                         {
-                                            if (network_verbose || dns_history)
+                                            if ((network_verbose || dns_history) && !Ignore_TID.Contains(e.ThreadID))
                                             {
                                                 Console.WriteLine("\n------------------------------\n[!] DNS\n\nProcess: {0} ({1})\nTID: {2}\n\n[*] Query: {3}\n[*] Result: {4}\n", Process.GetProcessById(e.ProcessID).ProcessName, e.ProcessID, e.ThreadID, e.PayloadByName("QueryName"), e.PayloadByName("QueryResults"));
                                             }
@@ -1074,5 +1107,6 @@ namespace BeaconHunter
         [DllImport("kernel32.dll")]
         static extern IntPtr OpenThread(ThreadAccess dwDesiredAccess, bool bInheritHandle,
            uint dwThreadId);
+
     }
 }

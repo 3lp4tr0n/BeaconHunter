@@ -36,7 +36,11 @@ Tools -> NuGet Package Manager -> Package Manager Console
 * `Install-Package Microsoft.Diagnostics.Tracing.TraceEvent -Version 2.0.64`
 * `Install-Package System.Runtime.InteropServices.RuntimeInformation -Version 4.3.0`
 
-## Running BeaconHunter:
+## Running BeaconHunter
 
 * Open Powershell or CMD as an Administrator
 * `.\BeaconHunter.exe`
+
+### Monitor:
+
+![image](https://user-images.githubusercontent.com/32691065/116262560-a6a03a80-a746-11eb-982a-3ad4ab5db4b0.png)

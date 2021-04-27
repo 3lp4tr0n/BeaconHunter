@@ -55,6 +55,8 @@ Score is determined by calculating the time difference between beacon callbacks,
 
 #### DNS Queries
 
+Helpful to detect DNS beacons.
+
 ![image](https://user-images.githubusercontent.com/32691065/116275760-e587bd80-a751-11eb-8125-0319878e823c.png)
 
 

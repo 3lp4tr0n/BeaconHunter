@@ -45,6 +45,7 @@ Tools -> NuGet Package Manager -> Package Manager Console
 
 ##### Network Beacon Score
 
+Score = (1/(
 
 ![image](https://user-images.githubusercontent.com/32691065/116272309-cd626f00-a74e-11eb-8e6b-0689d6d6c560.png)
 

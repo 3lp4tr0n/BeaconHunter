@@ -45,7 +45,8 @@ Tools -> NuGet Package Manager -> Package Manager Console
 
 ##### Network Beacon Score
 
-Score = (1/(
+Score is determined by calculating the time difference between beacon callbacks, then calculating the 1st derivative of delta time between callbacks, and then feeding the answer to an inverse function `100/x` where x is the 1st derivative of delta time between callbacks. (Note: There is probably a better wauy, but it works)
 
-![image](https://user-images.githubusercontent.com/32691065/116272309-cd626f00-a74e-11eb-8e6b-0689d6d6c560.png)
+![image](https://user-images.githubusercontent.com/32691065/116275255-71e5b080-a751-11eb-8381-2da3ffe0e9cc.png)
+
 

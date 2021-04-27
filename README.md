@@ -41,7 +41,7 @@ Tools -> NuGet Package Manager -> Package Manager Console
 * Open Powershell or CMD as an Administrator
 * `.\BeaconHunter.exe`
 
-### Monitor:
+### Monitor
 
 ##### Network Beacon Score
 

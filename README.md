@@ -41,7 +41,7 @@ Tools -> NuGet Package Manager -> Package Manager Console
 * Open Powershell or CMD as an Administrator
 * `.\BeaconHunter.exe`
 
-### Monitor
+### MONITOR
 
 ##### Network Beacon Score
 
@@ -60,7 +60,7 @@ Helpful to detect DNS beacons.
 ![image](https://user-images.githubusercontent.com/32691065/116275760-e587bd80-a751-11eb-8125-0319878e823c.png)
 
 
-### Action
+### ACTION
 
 #### Suspend Thread ID - Manual
 

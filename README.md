@@ -1,20 +1,19 @@
 # BeaconHunter
 
-Behaviour based monitoring and hunting tool built in C# tool leveraging ETW tracing. Blue teamers can use this tool to detect and respond to potential Cobalt Strike beacons. Red teamers can use this tool to discover new processes that behave like beacons to improve their opsec.
+Behaviour based monitoring and hunting tool built in C# tool leveraging ETW tracing. Blue teamers can use this tool to detect and respond to potential Cobalt Strike beacons. Red teamers can use this tool to research ETW bypasses and discover new processes that behave like beacons.
 
 ***Author***: Andrew Oliveau (@AndrewOliveau)
 
 ![alt text](https://github.com/3lp4tr0n/BeaconHunter/blob/main/screenshots/beacon_network_score.PNG)
 
 ### TL;DR
-Beacon implants injected in a benign process live in a thread with a `Wait:DelayExecution` state (probably related to Cobalt Strike's `sleep`). Find all processes that contain a thread in a `Wait:DelayExecution` state. Then leverage ETW tracing to specifically monitor suspicious thread activity:
+Beacon implants injected in a benign process live in a thread with a `Wait:DelayExecution` state (probably related to Cobalt Strike's `sleep`). Find all processes that contain a thread in a `Wait:DelayExecution` state. Then, leverage ETW tracing to specifically monitor suspicious thread activity:
 
   - HTTPS callback frequency
   - DNS queries
   - File system (`cd`,`ls`,`upload`,`rm`)
   - Process termination (`kill`)
   - Shell commands (`run`,`execute`)
-  - PowerShell (TODO)
 
 Score suspicious behavior. Log, display, and take action against them.
   

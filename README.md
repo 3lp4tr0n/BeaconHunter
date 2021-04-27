@@ -60,11 +60,13 @@ Score is determined by calculating the time difference between beacon callbacks,
 
 ### Action
 
-#### Suspend Thread ID (TID)
+#### Suspend Thread ID - Manual
 
 ![image](https://user-images.githubusercontent.com/32691065/116276562-a312b080-a752-11eb-99f7-ed7972f7117c.png)
 
-#### Automatically Suspend Suspicious Threads 
+#### Suspend Thread ID - Automated
+
+Set a score threshold. If Network Beacon Scores goes above threshold, BeaconHunter will automatically suspend the thread.
 
 ![image](https://user-images.githubusercontent.com/32691065/116276469-92623a80-a752-11eb-86f6-ca4c87229b3f.png)
 

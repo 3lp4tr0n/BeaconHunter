@@ -55,6 +55,17 @@ Score is determined by calculating the time difference between beacon callbacks,
 
 #### DNS Queries
 
-![image](https://user-images.githubusercontent.com/32691065/116275626-cee16680-a751-11eb-9a81-1975c3f3f6cc.png)
+![image](https://user-images.githubusercontent.com/32691065/116275760-e587bd80-a751-11eb-8125-0319878e823c.png)
+
+
+### Action
+
+#### Suspend Thread ID (TID)
+
+![image](https://user-images.githubusercontent.com/32691065/116276562-a312b080-a752-11eb-99f7-ed7972f7117c.png)
+
+#### Automatically Suspend Suspicious Threads 
+
+![image](https://user-images.githubusercontent.com/32691065/116276469-92623a80-a752-11eb-86f6-ca4c87229b3f.png)
 
 

@@ -49,4 +49,12 @@ Score is determined by calculating the time difference between beacon callbacks,
 
 ![image](https://user-images.githubusercontent.com/32691065/116275255-71e5b080-a751-11eb-8381-2da3ffe0e9cc.png)
 
+##### IP and PORT stats
+
+![image](https://user-images.githubusercontent.com/32691065/116275526-ba9d6980-a751-11eb-9101-b3ca65502fb5.png)
+
+#### DNS Queries
+
+![image](https://user-images.githubusercontent.com/32691065/116275626-cee16680-a751-11eb-9a81-1975c3f3f6cc.png)
+
 

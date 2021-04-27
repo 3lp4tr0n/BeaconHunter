@@ -43,4 +43,8 @@ Tools -> NuGet Package Manager -> Package Manager Console
 
 ### Monitor:
 
-![image](https://user-images.githubusercontent.com/32691065/116262560-a6a03a80-a746-11eb-982a-3ad4ab5db4b0.png)
+#### Network Beacon Score
+
+
+![image](https://user-images.githubusercontent.com/32691065/116272309-cd626f00-a74e-11eb-8e6b-0689d6d6c560.png)
+

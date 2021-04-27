@@ -26,7 +26,7 @@ namespace BeaconHunter
 
         // Monitor bools
         private static bool verbose = true;
-        private static bool network_verbose = false;
+        private static bool network_verbose = true;
         private static bool beacon_score = false;
         private static bool pid_tid_history = false;
         private static bool command_history = false;
@@ -79,7 +79,7 @@ namespace BeaconHunter
                     Console.WriteLine("\n\n[1] Monitor");
                     Console.WriteLine("[2] Action");
                     Console.WriteLine("[3] System Verbose (default ON)");
-                    Console.WriteLine("[4] Network Verbose (default OFF)");
+                    Console.WriteLine("[4] Network Verbose (default ON)");
                     Console.WriteLine("[5] Protect Sysmon (default ON)\n");
                     Console.Write("> ");
                     input = Console.ReadLine();

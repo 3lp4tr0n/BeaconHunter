@@ -70,6 +70,8 @@ Tools -> NuGet Package Manager -> Package Manager Console
 
 #### Shell Commands
 
+* Detects PPID spoofing
+
 ![image](https://user-images.githubusercontent.com/32691065/116636093-7a471280-a92e-11eb-9ec0-c1c9a7f5b65a.png)
 
 ### ACTION

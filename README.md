@@ -45,7 +45,7 @@ Tools -> NuGet Package Manager -> Package Manager Console
 
 ##### Network Beacon Score
 
-Score is determined by calculating the time difference between beacon callbacks (delta), then calculating the 1st derivative of delta, and then feeding the answer to an inverse function `100/x` where x is the 1st derivative of delta. (Note: There is probably a better way, but it works)
+* Score is determined by calculating the time difference between beacon callbacks (delta), then calculating the 1st derivative of delta, and then feeding the answer to an inverse function `100/x` where x is the 1st derivative of delta. (Note: There is probably a better way, but it works)
 
 ![image](https://user-images.githubusercontent.com/32691065/116634488-34884b00-a92a-11eb-95f6-87797a62361e.png)
 
@@ -56,7 +56,7 @@ Score is determined by calculating the time difference between beacon callbacks 
 
 #### DNS Queries
 
-Helpful to detect DNS beacons.
+* Helpful to detect DNS beacons.
 
 ![image](https://user-images.githubusercontent.com/32691065/116634931-74036700-a92b-11eb-962b-4eccd479f289.png)
 
@@ -80,7 +80,7 @@ Helpful to detect DNS beacons.
 
 #### Suspend Thread ID - Automated
 
-Set a score threshold. If Network Beacon Scores goes above threshold, BeaconHunter will automatically suspend the thread.
+* Set a score threshold. If Network Beacon Scores goes above threshold, BeaconHunter will automatically suspend the thread.
 
 ![image](https://user-images.githubusercontent.com/32691065/116634653-a52f6780-a92a-11eb-8092-293778a6e82a.png)
 

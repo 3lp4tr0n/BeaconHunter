@@ -47,29 +47,31 @@ Tools -> NuGet Package Manager -> Package Manager Console
 
 Score is determined by calculating the time difference between beacon callbacks (delta), then calculating the 1st derivative of delta, and then feeding the answer to an inverse function `100/x` where x is the 1st derivative of delta. (Note: There is probably a better way, but it works)
 
-![image](https://user-images.githubusercontent.com/32691065/116275255-71e5b080-a751-11eb-8381-2da3ffe0e9cc.png)
+![image](https://user-images.githubusercontent.com/32691065/116634488-34884b00-a92a-11eb-95f6-87797a62361e.png)
 
 ##### IP and PORT stats
 
-![image](https://user-images.githubusercontent.com/32691065/116275526-ba9d6980-a751-11eb-9101-b3ca65502fb5.png)
+![image](https://user-images.githubusercontent.com/32691065/116634452-17537c80-a92a-11eb-9c34-a3ce57de0cc2.png)
+
 
 #### DNS Queries
 
 Helpful to detect DNS beacons.
 
-![image](https://user-images.githubusercontent.com/32691065/116275760-e587bd80-a751-11eb-8125-0319878e823c.png)
+![image](https://user-images.githubusercontent.com/32691065/116634931-74036700-a92b-11eb-962b-4eccd479f289.png)
 
 
 ### ACTION
 
 #### Suspend Thread ID - Manual
 
-![image](https://user-images.githubusercontent.com/32691065/116276562-a312b080-a752-11eb-99f7-ed7972f7117c.png)
+![image](https://user-images.githubusercontent.com/32691065/116634737-e6c01280-a92a-11eb-94f4-a76dbb1f8ef4.png)
 
 #### Suspend Thread ID - Automated
 
 Set a score threshold. If Network Beacon Scores goes above threshold, BeaconHunter will automatically suspend the thread.
 
-![image](https://user-images.githubusercontent.com/32691065/116276469-92623a80-a752-11eb-86f6-ca4c87229b3f.png)
+![image](https://user-images.githubusercontent.com/32691065/116634653-a52f6780-a92a-11eb-8092-293778a6e82a.png)
+
 
 

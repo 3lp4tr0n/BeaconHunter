@@ -60,6 +60,17 @@ Helpful to detect DNS beacons.
 
 ![image](https://user-images.githubusercontent.com/32691065/116634931-74036700-a92b-11eb-962b-4eccd479f289.png)
 
+#### Directory Change
+
+![image](https://user-images.githubusercontent.com/32691065/116636023-48ce4700-a92e-11eb-84a5-f6bc68a04634.png)
+
+#### New Uploaded Files
+
+![image](https://user-images.githubusercontent.com/32691065/116636055-60a5cb00-a92e-11eb-88da-a4f08a35c6fa.png)
+
+#### Shell Commands
+
+![image](https://user-images.githubusercontent.com/32691065/116636093-7a471280-a92e-11eb-9ec0-c1c9a7f5b65a.png)
 
 ### ACTION
 

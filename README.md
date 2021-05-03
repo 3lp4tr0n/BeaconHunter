@@ -38,7 +38,7 @@ Tools -> NuGet Package Manager -> Package Manager Console
 
 ## Running BeaconHunter
 
-* Open Powershell or CMD as an Administrator
+* Open PowerShell or CMD as an Administrator
 * `.\BeaconHunter.exe`
 
 ### MONITOR

@@ -49,7 +49,7 @@ Tools -> NuGet Package Manager -> Package Manager Console
 
 ![image](https://user-images.githubusercontent.com/32691065/116634488-34884b00-a92a-11eb-95f6-87797a62361e.png)
 
-##### IP and PORT stats
+##### IP and PORT Stats
 
 ![image](https://user-images.githubusercontent.com/32691065/116634452-17537c80-a92a-11eb-9c34-a3ce57de0cc2.png)
 

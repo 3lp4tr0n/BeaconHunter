@@ -86,5 +86,10 @@ Tools -> NuGet Package Manager -> Package Manager Console
 
 ![image](https://user-images.githubusercontent.com/32691065/116634653-a52f6780-a92a-11eb-8092-293778a6e82a.png)
 
+### Sources
+
+* ETW Providers: https://gist.github.com/guitarrapc/35a94b908bad677a7310
+* ETW Events: https://github.com/jdu2600/Windows10EtwEvents
+* TraceEvent Library Guide: https://github.com/microsoft/perfview/blob/main/documentation/TraceEvent/TraceEventProgrammersGuide.md
 
 

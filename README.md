@@ -1,6 +1,6 @@
 # BeaconHunter
 
-Behavior based monitoring and hunting tool built in C# tool leveraging ETW tracing. Blue teamers can use this tool to detect and respond to potential Cobalt Strike beacons. Red teamers can use this tool to research ETW bypasses and discover new processes that behave like beacons.
+Behavior based monitoring and hunting tool built in C# leveraging ETW tracing. Blue teamers can use this tool to detect and respond to potential Cobalt Strike beacons. Red teamers can use this tool to research ETW bypasses and discover new processes that behave like beacons.
 
 ***Author***: Andrew Oliveau (@AndrewOliveau)
 
